@@ -5,16 +5,16 @@ gc()
 #           Input
 ##########################################################################
 
-### gds file
-dir_geno <- "/path_to_the_GDS_file/"
-gds_file_name_1 <- "freeze.5.chr"
-gds_file_name_2 <- ".pass_and_fail.gtonly.minDP0.gds"
-### annotation file (output of Annotate.R)
-dir_anno <- "/path_to_the_annotation_file/"
+# these will always be the same
 anno_file_name_1 <- "Anno_chr"
 anno_file_name_2 <- "_STAARpipeline.csv"
 
 chr <- as.numeric(commandArgs(TRUE)[1])
+
+dir_geno <- commandArgs(TRUE)[2]
+gds_file_name_1 <- commandArgs(TRUE)[3]
+gds_file_name_2 <- commandArgs(TRUE)[4]
+dir_anno <- commandArgs(TRUE)[5]
 
 
 ###########################################################################
@@ -28,26 +28,39 @@ library(SeqVarTools)
 library(readr)
 
 ### read annotation data
-FunctionalAnnotation <- read_csv(paste0(dir_anno,"chr",chr,"/",anno_file_name_1,chr,anno_file_name_2),
-col_types=list(col_character(),col_double(),col_double(),col_double(),col_double(),
-col_double(),col_double(),col_double(),col_double(),col_double(),
-col_character(),col_character(),col_character(),col_double(),col_character(),
-col_character(),col_character(),col_character(),col_character(),col_double(),
-col_double(),col_character()))
+# NOTE: read_csv reads in too many columns incorrectly as logical. Just use data.table::fread instead
+FunctionalAnnotation <- data.table::fread(paste0(dir_anno,"chr",chr,"/",anno_file_name_1,chr,anno_file_name_2))
 
 dim(FunctionalAnnotation)
+print(str(FunctionalAnnotation))
 
 ## rename colnames
-colnames(FunctionalAnnotation)[2] <- "apc_conservation"
-colnames(FunctionalAnnotation)[7] <- "apc_local_nucleotide_diversity"
-colnames(FunctionalAnnotation)[9] <- "apc_protein_function"
+# Update: with the newer FAVOR db downloads, these renames are now accurate
+
+# if these names don't exist in FunctionalAnnotation, then they won't be renamed.
+# this way, if by some chance the 2nd, 7th, and 9th columns aren't these variables,
+# the wrong thing won't get renamed
+rn_idx1 <- grep("apc_conservation_v2", names(FunctionalAnnotation))
+rn_idx2 <- grep("apc_local_nucleotide_diversity_v3", names(FunctionalAnnotation))
+rn_idx3 <- grep("apc_protein_function_v3", names(FunctionalAnnotation))
+
+print(paste("Renaming", colnames(FunctionalAnnotation)[rn_idx1], "to apc_conversion"))
+colnames(FunctionalAnnotation)[rn_idx1] <- "apc_conservation"
+
+print(paste("Renaming", colnames(FunctionalAnnotation)[rn_idx2], "apc_local_nucleotide_diversity"))
+colnames(FunctionalAnnotation)[rn_idx2] <- "apc_local_nucleotide_diversity"
+
+print(paste("Renaming", colnames(FunctionalAnnotation)[rn_idx3], "apc_protein_function"))
+colnames(FunctionalAnnotation)[rn_idx3] <- "apc_protein_function"
+
 
 ## open GDS
 gds.path <- paste0(dir_geno,gds_file_name_1,chr,gds_file_name_2)
 genofile <- seqOpen(gds.path, readonly = FALSE)
 
 Anno.folder <- index.gdsn(genofile, "annotation/info")
-add.gdsn(Anno.folder, "FunctionalAnnotation", val=FunctionalAnnotation, compress="LZMA_ra", closezip=TRUE)
+# add replace=T to overwrite old annotations?
+add.gdsn(Anno.folder, "FunctionalAnnotation", val=FunctionalAnnotation, compress="LZMA_ra", closezip=TRUE, replace=TRUE)
 
 seqClose(genofile)
 

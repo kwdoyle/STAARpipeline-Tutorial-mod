@@ -6,15 +6,20 @@ gc()
 ##########################################################################
 
 ### DB split information 
-file_DBsplit <- "/path_to_the_file/FAVORdatabase_chrsplit.csv"
-### Targeted GDS
-dir_geno <- "/path_to_the_GDS_file/"
-gds_file_name_1 <- "freeze.5.chr"
-gds_file_name_2 <- ".pass_and_fail.gtonly.minDP0.gds"
-### output
-output_path <- "/path_to_the_output_file/"
+file_DBsplit <- "/home/STAAR/STAARpipeline-Tutorial/FAVORannotator_csv/FAVORdatabase_chrsplit.csv"
 
 chr <- as.numeric(commandArgs(TRUE)[1])
+
+dir_geno <- commandArgs(TRUE)[2]
+gds_file_name_1 <- commandArgs(TRUE)[3]
+gds_file_name_2 <- commandArgs(TRUE)[4]
+output_path <- commandArgs(TRUE)[5]
+
+print(paste("gds dir:", dir_geno))
+print(paste("gds file name 1:", gds_file_name_1))
+print(paste("gds file name 2:", gds_file_name_2))
+print(paste("save path:", output_path))
+print(paste("chromosome:", chr))
 
 ###########################################################################
 #           Main Function 

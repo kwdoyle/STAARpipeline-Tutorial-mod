@@ -6,21 +6,24 @@ gc()
 ##########################################################################
 
 ### DB split information 
-file_DBsplit <- "/path_to_the_file/FAVORdatabase_chrsplit.csv"
-
-### xsv directory
-xsv <- "/path_to_the_xsv_software/.cargo/bin/xsv"
-
-### output
-output_path <- "/path_to_the_output_file/"
-
-### DB file
-DB_path <- "/path_to_the_FAVOR_database/n/holystore01/LABS/xlin/Lab/xihao_zilin/FAVORDB/"
+file_DBsplit <- "/home/STAAR/STAARpipeline-Tutorial/FAVORannotator_csv/FAVORdatabase_chrsplit.csv"
 
 ### anno channel (subset)
+# this can stay hard-coded for now..
 anno_colnum <- c(1,8:12,15,16,19,23,25:36)
+# 190 should be the last column in the data file
+# !! Can now use hard-coded indices above, as they match with these new favor db downloads from the website
 
 chr <- as.numeric(commandArgs(TRUE)[1])
+
+xsv <- commandArgs(TRUE)[2]
+output_path <- commandArgs(TRUE)[3]
+DB_path <- commandArgs(TRUE)[4]
+
+print(paste("xsv:", xsv))
+print(paste("save path:", output_path))
+print(paste("FAVOR db path:", DB_path))
+print(paste("chromosome:", chr))
 
 ###########################################################################
 #           Main Function 

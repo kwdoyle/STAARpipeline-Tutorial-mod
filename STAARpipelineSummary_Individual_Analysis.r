@@ -16,20 +16,29 @@ library(STAAR)
 library(STAARpipeline)
 library(STAARpipelineSummary)
 
+# for now, to operate on only some chromosomes, use my modified function
+source("/home/STAAR/STAARpipeline-Tutorial/individ_analysis_summary_custom.R")
+environment(Individual_Analysis_Results_Summary) <- asNamespace('STAARpipelineSummary')   
+assignInNamespace("Individual_Analysis_Results_Summary", Individual_Analysis_Results_Summary, ns = "STAARpipelineSummary")
+
 ###########################################################
 #           User Input
 ###########################################################
+basedir <- commandArgs(TRUE)[1]
+
 ## Number of jobs for each chromosome
-jobs_num <- get(load("/path_to_the_file/jobs_num.Rdata"))
+jobs_num <- get(load(paste0(basedir, "/AssociationAnalysisPrestep/jobs_num.Rdata")))
 ## aGDS directory
-agds_dir <- get(load("/path_to_the_file/agds_dir.Rdata"))
+agds_dir <- get(load(paste0(basedir, "/AssociationAnalysisPrestep/agds_dir.Rdata")))
 ## Known loci
-known_loci <- get(load("/path_to_the_file/TOPMed_F5_LDL_known_loci_genome_LD_pruning.Rdata"))
+#known_loci <- get(load("/path_to_the_file/TOPMed_F5_LDL_known_loci_genome_LD_pruning.Rdata"))
+# For now, set this to NULL
+known_loci <- NULL
 ## Null model
-obj_nullmodel <- get(load("/path_to_the_file/obj_nullmodel.Rdata"))
+obj_nullmodel <- get(load(paste0(basedir, "/staar_null_model/obj_nullmodel.Rdata")))
 
 ## results path
-input_path <- "/path_to_the_results_file/"
+input_path <- paste0(basedir, "/Individual_Variant_Analysis/")
 output_path <- input_path
 ## results name
 individual_results_name <- "TOPMed_F5_LDL_Individual_Analysis"

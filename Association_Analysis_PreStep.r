@@ -16,14 +16,30 @@ library(SeqVarTools)
 #           User Input
 ###########################################################
 ## file directory of aGDS file (genotype and annotation data) 
-dir.geno <- "/path_to_the_aGDS_file/"
-## file name of aGDS, seperate by chr number 
-agds_file_name_1 <- "freeze.5.chr"
-agds_file_name_2 <- ".pass_and_fail.gtonly.minDP0.gds"
+### file name of aGDS, seperate by chr number 
+#agds_file_name_1 <- "topmed_chr_"
+#agds_file_name_2 <- ".gds"
 ## channel name of the QC label in the GDS/aGDS file
 QC_label <- "annotation/filter"
 ## file directory for the output files
-output_path <- "/path_to_the_output_file/" 
+
+dir.geno <- dir_geno <- commandArgs(TRUE)[1]
+agds_file_name_1 <- commandArgs(TRUE)[2]
+agds_file_name_2 <- commandArgs(TRUE)[3]
+output_path <- commandArgs(TRUE)[4]
+
+dir.create(output_path)
+
+print(paste("Performing prestep for", dir.geno))
+
+
+## annotation name. The first eight names are used to define masks in gene-centric analysis, do not change them!! 
+## The others are the annotation you want to use in the STAAR procedure, and they are flexible to change.
+# # NOTE:
+# # rsid is absent from FAVOR database files. Variant ID (e.g., 5-1111-A-T), however, is present.
+# # use this instead of rsid so variant-annotation-within-signif-masks step at the end works.
+# UPDATE: this is fixed when using the new FAVOR db downloads.
+
 ## annotation name. The first eight names are used to define masks in gene-centric analysis, do not change them!! 
 ## The others are the annotation you want to use in the STAAR procedure, and they are flexible to change.
 name <- c("rs_num","GENCODE.Category","GENCODE.Info","GENCODE.EXONIC.Category",
@@ -55,6 +71,11 @@ for(chr in 1:22)
 {
 	print(chr)
 	gds.path <- agds_dir[chr] 
+	# !!! if a gds file for the current chromosome doesn't exist, skip to the next one
+	if (!file.exists(gds.path)) {
+		print("No gds file found for this chromosome; skipping..")
+		next
+	}
 	genofile <- seqOpen(gds.path)
 	
 	filter <- seqGetData(genofile, QC_label)
