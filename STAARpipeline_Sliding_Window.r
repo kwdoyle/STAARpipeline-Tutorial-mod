@@ -17,12 +17,19 @@ library(STAARpipeline)
 ###########################################################
 #           User Input
 ###########################################################
+## input array id from batch file (Harvard FAS RC cluster)
+# note: actually use the intended large number of array jobs,
+# splitting each chromosome up into many jobs.
+# this analysis will likely take too long, otherwise
+arrayid <- as.numeric(commandArgs(TRUE)[1])
+basedir <- commandArgs(TRUE)[2]
+
 ## Number of jobs for each chromosome
-jobs_num <- get(load("/path_to_the_file/jobs_num.Rdata"))
+jobs_num <- get(load(paste0(basedir, "/AssociationAnalysisPrestep/jobs_num.Rdata")))
 ## aGDS directory
-agds_dir <- get(load("/path_to_the_file/agds_dir.Rdata"))
+agds_dir <- get(load(paste0(basedir, "/AssociationAnalysisPrestep/agds_dir.Rdata")))
 ## Null model
-obj_nullmodel <- get(load("/path_to_the_file/obj_nullmodel.Rdata"))
+obj_nullmodel <- get(load(paste0(basedir, "/staar_null_model/obj_nullmodel.Rdata")))
 
 ## QC_label
 QC_label <- "annotation/filter"
@@ -36,7 +43,7 @@ sliding_window_length <- 2000
 ## Annotation_dir
 Annotation_dir <- "annotation/info/FunctionalAnnotation"
 ## Annotation channel
-Annotation_name_catalog <- get(load("/path_to_the_file/Annotation_name_catalog.Rdata"))
+Annotation_name_catalog <- get(load(paste0(basedir, "/AssociationAnalysisPrestep/Annotation_name_catalog.Rdata")))
 # Or equivalently
 # Annotation_name_catalog <- read.csv("/path_to_the_file/Annotation_name_catalog.csv")
 ## Use_annotation_weights
@@ -46,11 +53,12 @@ Annotation_name <- c("CADD","LINSIGHT","FATHMM.XF","aPC.EpigeneticActive","aPC.E
                      "aPC.Conservation","aPC.LocalDiversity","aPC.Mappability","aPC.TF","aPC.Protein")
 
 ## output path
-output_path <- "/path_to_the_output_file/"
+output_path <- paste0(basedir, "/Sliding_Window_Analysis/")
+print(paste("Will create directory:", output_path))
+dir.create(output_path)
+
 ## output file name
 output_file_name <- "TOPMed_F5_LDL_Sliding_Window"
-## input array id from batch file (Harvard FAS RC cluster)
-arrayid <- as.numeric(commandArgs(TRUE)[1])
 
 ###########################################################
 #           Main Function 
