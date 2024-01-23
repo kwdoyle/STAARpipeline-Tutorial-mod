@@ -20,6 +20,9 @@ library(STAARpipeline)
 ###########################################################
 chr <- as.numeric(commandArgs(TRUE)[1])
 basedir <- commandArgs(TRUE)[2]
+afthresh <- as.numeric(commandArgs(TRUE)[3])
+
+print(paste("Using MAF cutoff of", afthresh))
 
 ## aGDS directory
 agds_dir <- get(load(paste0(basedir, "/AssociationAnalysisPrestep/agds_dir.Rdata")))
@@ -124,7 +127,7 @@ for(kk in 1:sub_seq_num)
   gene_name <- genes_info_chr[kk,1]
   print(gene_name)
   results <- Gene_Centric_Noncoding(chr=chr,gene_name=gene_name,genofile=genofile,obj_nullmodel=obj_nullmodel,
-                                    rare_maf_cutoff=0.01,rv_num_cutoff=2,
+                                    rare_maf_cutoff=afthresh,rv_num_cutoff=2,
                                     QC_label=QC_label,variant_type=variant_type,geno_missing_imputation=geno_missing_imputation,
                                     Annotation_dir=Annotation_dir,Annotation_name_catalog=Annotation_name_catalog,
                                     Use_annotation_weights=Use_annotation_weights,Annotation_name=Annotation_name)
