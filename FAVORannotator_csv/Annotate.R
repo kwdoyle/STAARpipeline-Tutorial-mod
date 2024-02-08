@@ -6,7 +6,7 @@ gc()
 ##########################################################################
 
 ### DB split information 
-file_DBsplit <- "/home/STAAR/STAARpipeline-Tutorial/FAVORannotator_csv/FAVORdatabase_chrsplit.csv"
+#file_DBsplit <- "/home/STAAR/STAARpipeline-Tutorial/FAVORannotator_csv/FAVORdatabase_chrsplit.csv"
 
 ### anno channel (subset)
 # this can stay hard-coded for now..
@@ -19,11 +19,15 @@ chr <- as.numeric(commandArgs(TRUE)[1])
 xsv <- commandArgs(TRUE)[2]
 output_path <- commandArgs(TRUE)[3]
 DB_path <- commandArgs(TRUE)[4]
+basedir <- commandArgs(TRUE)[5]
 
 print(paste("xsv:", xsv))
 print(paste("save path:", output_path))
 print(paste("FAVOR db path:", DB_path))
 print(paste("chromosome:", chr))
+
+### DB split information 
+file_DBsplit <- paste0(basedir, "/STAARpipeline-Tutorial/FAVORannotator_csv/FAVORdatabase_chrsplit.csv")
 
 ###########################################################################
 #           Main Function 
